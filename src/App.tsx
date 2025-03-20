@@ -13,6 +13,7 @@ export function App() {
   const { data: paginatedTransactions, ...paginatedTransactionsUtils } = usePaginatedTransactions()
   const { data: transactionsByEmployee, ...transactionsByEmployeeUtils } = useTransactionsByEmployee()
   const [isLoading, setIsLoading] = useState(false)
+  const [viewMore, setviewMore] = useState(true)
 
   const transactions = useMemo(
     () => paginatedTransactions?.data ?? transactionsByEmployee ?? null,
@@ -63,8 +64,16 @@ export function App() {
             if (newValue === null) {
               return
             }
-
-            await loadTransactionsByEmployee(newValue.id)
+            {
+              console.log("employees = ", employees)
+            }
+            if (newValue.id === "") {
+              setviewMore(true)
+              loadAllTransactions()
+            } else {
+              setviewMore(false)
+              await loadTransactionsByEmployee(newValue.id)
+            }
           }}
         />
 
@@ -76,6 +85,7 @@ export function App() {
           {transactions !== null && (
             <button
               className="RampButton"
+              style={{ display: !viewMore ? "none" : "block" }}
               disabled={paginatedTransactionsUtils.loading}
               onClick={async () => {
                 await loadAllTransactions()
