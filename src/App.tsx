@@ -64,9 +64,6 @@ export function App() {
             if (newValue === null) {
               return
             }
-            {
-              console.log("employees = ", employees)
-            }
             if (newValue.id === "") {
               setviewMore(true)
               loadAllTransactions()
