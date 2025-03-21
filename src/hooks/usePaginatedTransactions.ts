@@ -21,8 +21,8 @@ export function usePaginatedTransactions(): PaginatedTransactionsResult {
       if (response === null || previousResponse === null) {
         return response
       }
-
-      return { data: response.data, nextPage: response.nextPage }
+      //Bug 4 Fix. previous data and current data are concatinated.
+      return { data: previousResponse.data.concat(response.data), nextPage: response.nextPage }
     })
   }, [fetchWithCache, paginatedTransactions])
 

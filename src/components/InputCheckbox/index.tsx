@@ -12,6 +12,7 @@ export const InputCheckbox: InputCheckboxComponent = ({ id, checked = false, dis
           "RampInputCheckbox--label-checked": checked,
           "RampInputCheckbox--label-disabled": disabled,
         })}
+        //Bug 2 fix: Label was not linked with the inputId
         htmlFor={inputId}
       />
       <input

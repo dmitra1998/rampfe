@@ -24,9 +24,10 @@ export function App() {
     transactionsByEmployeeUtils.invalidateData()
 
     await employeeUtils.fetchAll()
-    await paginatedTransactionsUtils.fetchAll()
-
+    // Bug 5 fix. Shifted the setIsLoading after employeeUtils.fetchAll otherwise isLoading is set to false
+    // after  paginatedTransactionsUtils.fetchAll loads
     setIsLoading(false)
+    await paginatedTransactionsUtils.fetchAll()
   }, [employeeUtils, paginatedTransactionsUtils, transactionsByEmployeeUtils])
 
   const loadTransactionsByEmployee = useCallback(
@@ -64,8 +65,13 @@ export function App() {
             if (newValue === null) {
               return
             }
-
-            await loadTransactionsByEmployee(newValue.id)
+            //Bug 3 fix. Added a condition to check when id='' (which is for 'All Employees').
+            //When id='' we will run the function loadAllTransactions.
+            //Another solution is using if(newValue===EMPTY_EMPLOYEE) instead of if (newValue.id === "")
+            if (newValue.id === "") await loadAllTransactions()
+            else {
+              await loadTransactionsByEmployee(newValue.id)
+            }
           }}
         />
 
@@ -78,6 +84,13 @@ export function App() {
             <button
               className="RampButton"
               disabled={paginatedTransactionsUtils.loading}
+              //Bug 6 Fix. This change makes the 'View More' button not visible. I could have done this for disable attribute but in that case 'View More' button is just greyed out.
+              style={{
+                display:
+                  paginatedTransactions === null || paginatedTransactions.nextPage === null
+                    ? "none"
+                    : "block",
+              }}
               onClick={async () => {
                 await loadAllTransactions()
               }}
